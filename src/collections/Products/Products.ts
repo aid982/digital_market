@@ -1,38 +1,45 @@
+
 import { PRODUCT_CATEGORIES } from "../../config";
 import { CollectionConfig } from "payload/types";
+import { User } from "../../payload-types";
+import { BeforeChangeHook } from "payload/dist/collections/config/types";
+
+
+export const addUser:BeforeChangeHook = ({req,data})=>{
+  console.log('data',data)
+  const user = req.user as User |null
+  return {...data,user:user?.id}
+}
+
 
 export const Products: CollectionConfig = {
   slug: "products",
+  hooks: {
+    beforeChange: [addUser],
+  },
   admin: {
     useAsTitle: "name",
-  },
-  auth: {
-    verify: {
-      generateEmailHTML: ({ user, token }) => {
-        return `<a href='${process.env.NEXT_PUBLIC_SERVER_URL}/verify-email?token=${token}'>Hello please verify</a>`;
-      },
-    },
-  },
+  }, 
   access: {
     read: () => true,
     create: () => true,
   },
-  fields: [
+  fields: [   
+    {
+      name: "name",
+      type: "text",
+      label: "Name",
+      required: true,
+    },
     {
       name: "user",
       type: "relationship",
       required: true,
       relationTo: "users",
       hasMany: false,
-      admin: {
-        condition: () => false,
+      admin: {        
+        condition:()=>false,        
       },
-    },
-    {
-      name: "name",
-      type: "text",
-      label: "Name",
-      required: true,
     },
     {
       name: "description",
@@ -53,14 +60,14 @@ export const Products: CollectionConfig = {
       options: PRODUCT_CATEGORIES.map(({ label, value }) => ({ label, value })),
       required: true,
     },
-  /*  {
-      name: "product files",
+    {
+      name: "productFile",
       type: "relationship",
-      label: "Products files",
+      label: "Products file",
       required: true,
-      relationTo: "product_files",
+      relationTo: "productFile",
       hasMany: false,
-    },*/
+    },
     {
       name: "approvedForSale",
       type: "select",

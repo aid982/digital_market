@@ -12,8 +12,7 @@ type Props = {};
 
 const Navbar =async  (props: Props) => {
   const nextCookies = cookies();
-  const user = await getServerSideUser(nextCookies);
-  console.log('user',user)
+  const user = await getServerSideUser(nextCookies);  
   return (
     <div className="bg-white sticky z-50 top-0 h-16  inset-x-0">
       <header className="relative ">
